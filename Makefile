@@ -87,7 +87,7 @@ ifeq ($(TARGET), $(DEVEL))
     # security options
 	CPPFLAGS += -D_FORTIFY_SOURCE=2
 	CFLAGS += -fstack-protector-strong
-	CFLAGS += -fPIE -pie -Wl,-pie -Wl,-z,defs -Wl,-z,now -Wl,-z,relro
+	CFLAGS += -fPIE -fPIC -pie -Wl,-pie -Wl,-z,defs -Wl,-z,now -Wl,-z,relro
 
     # sanitizers, some require clang
 	CFLAGS += -fsanitize=address
@@ -149,11 +149,22 @@ very-clean:
 	rm -f *.o *.gcda $(BUILD_ARTIFACT)
 
 static-analysis:
-	@echo -e "\e[1;33mAnalazying: cppcheck... \e[0m"
+	@echo
+	@echo -e "\e[1;33mAnalazing: cppcheck... \e[0m"
 	cppcheck $(CPPFLAGS) std=89 *.c *.h
-	@echo -e "\e[1;33mAnalazying: infer... \e[0m"	
+	@echo
+	@echo -e "\e[1;33mAnalazing: infer... \e[0m"	
 	infer run -- gcc -c main.c
-	@echo -e "\e[1;33mAnalazying: flawfinder... \e[0m"	
+	@echo
+	@echo -e "\e[1;33mAnalazing: cpd... \e[0m"
+	run.sh cpd --language c --minimum-tokens 50 --files main.c	
+	@echo
+	@echo -e "\e[1;33mAnalazing: flawfinder... \e[0m"	
 	flawfinder main.c
-	@echo -e "\e[1;33mAnalazying: splint... \e[0m"	
+	@echo
+	@echo -e "\e[1;33mAnalazing: splint... \e[0m"	
 	splint --weak $(CPPFLAGS) main.c
+	@echo
+	@echo -e "\e[1;33mAnalazing: oclint... \e[0m"
+	oclint main.c -- -c
+

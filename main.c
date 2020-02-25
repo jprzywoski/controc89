@@ -1,5 +1,3 @@
-
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
@@ -12,7 +10,6 @@ typedef struct {
   char *name;
   int currentSprite, walking, facingLeft, shooting, visible;
   int alive;
-
   SDL_Texture *sheetTexture;
 } Man;
 
@@ -22,7 +19,7 @@ typedef struct {
 
 SDL_Texture *bulletTexture;
 SDL_Texture *backgroundTexture;
-Bullet *bullets[MAX_BULLETS] = {0, };
+Bullet *bullets[MAX_BULLETS];
 Man enemy;
 
 int globalTime = 0;
@@ -45,7 +42,7 @@ void addBullet(float x, float y, float dx) {
 
   if (found >= 0) {
     i = found;
-    bullets[i] = malloc(sizeof(Bullet));
+    bullets[i] = (Bullet *)malloc(sizeof(Bullet));
     bullets[i]->x = x;
     bullets[i]->y = y;
     bullets[i]->dx = dx;
@@ -179,7 +176,7 @@ void doRender(SDL_Renderer *renderer, Man *man) {
     rect.w = 40;
     rect.h = 50;
     SDL_RenderCopyEx(renderer, man->sheetTexture, &srcRect, &rect, 0, NULL,
-                     man->facingLeft);
+                     (SDL_RendererFlip)man->facingLeft);
   }
 
   /* enemy */
@@ -198,7 +195,7 @@ void doRender(SDL_Renderer *renderer, Man *man) {
     eRect.h = 50;
 
     SDL_RenderCopyEx(renderer, enemy.sheetTexture, &eSrcRect, &eRect, 0, NULL,
-                     enemy.facingLeft);
+                     (SDL_RendererFlip)enemy.facingLeft);
   }
 
   for (i = 0; i < MAX_BULLETS; i++)
