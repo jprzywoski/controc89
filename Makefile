@@ -150,8 +150,11 @@ very-clean:
 
 static-analysis:
 	@echo
+	@echo -e "\e[1;33mAnalazing: clang-analyze... \e[0m"		
+	clang --analyze main.c
+	@echo
 	@echo -e "\e[1;33mAnalazing: cppcheck... \e[0m"
-	cppcheck $(CPPFLAGS) std=89 *.c *.h
+	cppcheck $(CPPFLAGS) std=c89 *.c *.h
 	@echo
 	@echo -e "\e[1;33mAnalazing: infer... \e[0m"	
 	infer run -- gcc -c main.c
@@ -167,4 +170,3 @@ static-analysis:
 	@echo
 	@echo -e "\e[1;33mAnalazing: oclint... \e[0m"
 	oclint main.c -- -c
-
